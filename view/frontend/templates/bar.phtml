@@ -1,0 +1,115 @@
+<?php
+/**
+ * "X left to free shipping" in the cart summary, above the checkout button.
+ *
+ * Theme-neutral `kk-` classes with their own styles, because Tailwind does not
+ * generate classes it only sees in a module; colour from the theme's
+ * `--color-primary` (every Hyvä port defines it; Luma falls back to near-black).
+ *
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+/** @var \Kkkonrad\FreeShippingBar\ViewModel\Progress $progress */
+$progress = $block->getData('progress')->get();
+if (!$progress) {
+    return;
+}
+$done = $progress['percent'] === 100;
+?>
+<div class="kk-ship-bar<?= $done ? ' kk-ship-bar--done' : '' ?>">
+    <div class="kk-ship-bar__head">
+        <span class="kk-ship-bar__icon" aria-hidden="true">
+            <?php if ($done): ?>
+                <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            <?php else: ?>
+                <svg viewBox="0 0 24 24"><path d="M3 6.5h11v9H3zM14 9.5h4l3 3.2v2.8h-7"/><circle cx="7" cy="17" r="1.8"/><circle cx="17.5" cy="17" r="1.8"/></svg>
+            <?php endif ?>
+        </span>
+        <p class="kk-ship-bar__text" id="kk-ship-bar-text">
+            <?php if ($done): ?>
+                <?= $escaper->escapeHtml(__('You have free shipping!')) ?>
+            <?php else: ?>
+                <?= /* @noEscape */ __(
+                    'Add %1 more for free shipping.',
+                    '<strong>' . $escaper->escapeHtml($progress['remaining']) . '</strong>'
+                ) ?>
+            <?php endif ?>
+        </p>
+    </div>
+    <progress class="kk-ship-bar__track" max="100" value="<?= (int)$progress['percent'] ?>"
+              aria-labelledby="kk-ship-bar-text"><?= (int)$progress['percent'] ?>%</progress>
+</div>
+<style>
+    /* em, not rem: Luma's root font-size is 10px (62.5%), Hyvä's is 16px */
+    .kk-ship-bar {
+        --kk-ship-accent: var(--color-primary, #111);
+        --kk-ship-tint: color-mix(in srgb, var(--kk-ship-accent) 7%, #fff);
+        --kk-ship-rail: color-mix(in srgb, var(--kk-ship-accent) 14%, #fff);
+        margin: 1.25em 0 1em;
+        padding: .8em .9em .9em;
+        border-radius: .9em;
+        background: var(--kk-ship-tint);
+    }
+    .kk-ship-bar--done {
+        --kk-ship-accent: #1f8a4c;
+    }
+    .kk-ship-bar__head {
+        display: flex;
+        align-items: center;
+        gap: .6em;
+        margin-bottom: .65em;
+    }
+    .kk-ship-bar__icon {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 1.9em;
+        height: 1.9em;
+        border-radius: 50%;
+        background: var(--kk-ship-accent);
+    }
+    .kk-ship-bar__icon svg {
+        width: 1.1em;
+        height: 1.1em;
+        fill: none;
+        stroke: #fff;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .kk-ship-bar__text {
+        margin: 0;
+        font-size: .85em;
+        line-height: 1.35;
+    }
+    .kk-ship-bar__text strong,
+    .kk-ship-bar--done .kk-ship-bar__text {
+        color: var(--kk-ship-accent);
+        font-weight: 700;
+    }
+    /* Native <progress>, unstyled: each engine paints the bar through its own pseudo-element */
+    .kk-ship-bar__track {
+        display: block;
+        width: 100%;
+        height: 8px;
+        border: 0;
+        border-radius: 999px;
+        overflow: hidden;
+        appearance: none;
+        background: var(--kk-ship-rail);
+        color: var(--kk-ship-accent);
+    }
+    .kk-ship-bar__track::-webkit-progress-bar {
+        background: var(--kk-ship-rail);
+    }
+    .kk-ship-bar__track::-webkit-progress-value {
+        border-radius: 999px;
+        background: linear-gradient(90deg, color-mix(in srgb, var(--kk-ship-accent) 65%, #fff), var(--kk-ship-accent));
+        transition: width .4s ease;
+    }
+    .kk-ship-bar__track::-moz-progress-bar {
+        border-radius: 999px;
+        background: linear-gradient(90deg, color-mix(in srgb, var(--kk-ship-accent) 65%, #fff), var(--kk-ship-accent));
+    }
+</style>

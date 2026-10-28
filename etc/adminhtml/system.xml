@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- A group inside core's Sales > Checkout, under its ACL -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="checkout">
+            <group id="free_shipping_bar" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Free Shipping Bar</label>
+                <field id="threshold" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Free shipping from (base currency)</label>
+                    <frontend_class>validate-zero-or-greater</frontend_class>
+                    <comment>Cart subtotal before discounts. Display only - it must match the cart price rule or carrier that actually grants free shipping. Empty or 0 hides the bar.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

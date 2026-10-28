@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  In the summary, right above "Proceed to Checkout" - same names in Hyvä and
+  Luma. Hyvä re-fetches the cart page and swaps #maincontent after every qty
+  change, so the bar stays current.
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="cart.summary">
+            <block name="kkkonrad.free.shipping.bar" before="checkout.cart.methods.bottom" template="Kkkonrad_FreeShippingBar::bar.phtml">
+                <arguments>
+                    <argument name="progress" xsi:type="object">Kkkonrad\FreeShippingBar\ViewModel\Progress</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
